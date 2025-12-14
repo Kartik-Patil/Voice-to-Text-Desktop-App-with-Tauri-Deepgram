@@ -50,3 +50,4 @@ export function closeDeepgram() {
     socket = null;
   }
 }
+
