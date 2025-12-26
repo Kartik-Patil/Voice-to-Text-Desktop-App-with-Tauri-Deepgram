@@ -2,5 +2,8 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 fn main() {
-    wispr_flow_clone_lib::run()
+    tauri::Builder::default()
+        .plugin(tauri_plugin_clipboard_manager::init())
+        .run(tauri::generate_context!())
+        .expect("error while running tauri application");
 }

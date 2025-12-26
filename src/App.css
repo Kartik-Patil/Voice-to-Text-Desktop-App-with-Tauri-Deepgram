@@ -113,4 +113,15 @@ button {
   button:active {
     background-color: #0f0f0f69;
   }
+
+  .recording {
+  background-color: #ff4d4d;
+  color: white;
+}
+
+.error {
+  color: red;
+  margin-top: 10px;
+}
+
 }

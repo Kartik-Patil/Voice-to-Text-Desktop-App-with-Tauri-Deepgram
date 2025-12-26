@@ -1,13 +1,12 @@
 let socket: WebSocket | null = null;
 
 export async function connectDeepgram(
-  onTranscript: (text: string) => void
+  onTranscript: (text: string, isFinal: boolean) => void
 ) {
   const apiKey = import.meta.env.VITE_DEEPGRAM_API_KEY;
 
   if (!apiKey) {
-    console.error("Deepgram API key not found");
-    return;
+    throw new Error("Deepgram API key not found");
   }
 
   socket = new WebSocket(
@@ -15,26 +14,20 @@ export async function connectDeepgram(
     ["token", apiKey]
   );
 
-  socket.onopen = () => {
-    console.log("Connected to Deepgram");
-  };
-
   socket.onmessage = (message) => {
     const data = JSON.parse(message.data);
+
     const transcript =
       data.channel?.alternatives?.[0]?.transcript;
+    const isFinal = data.is_final === true;
 
     if (transcript) {
-      onTranscript(transcript);
+      onTranscript(transcript, isFinal);
     }
   };
 
-  socket.onerror = (err) => {
-    console.error("Deepgram WebSocket error", err);
-  };
-
-  socket.onclose = () => {
-    console.log("Deepgram connection closed");
+  socket.onerror = () => {
+    console.error("Deepgram WebSocket error");
   };
 }
 
@@ -45,9 +38,6 @@ export function sendAudio(buffer: ArrayBuffer) {
 }
 
 export function closeDeepgram() {
-  if (socket) {
-    socket.close();
-    socket = null;
-  }
+  socket?.close();
+  socket = null;
 }
-

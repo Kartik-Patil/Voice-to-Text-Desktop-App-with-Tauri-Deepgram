@@ -9,9 +9,13 @@ let processor: ScriptProcessorNode | null = null;
 let stream: MediaStream | null = null;
 
 export async function startRecording(
-  onTranscript: (text: string) => void
+  onTranscript: (text: string, isFinal: boolean) => void
 ) {
-  stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  } catch {
+    throw new Error("Microphone permission denied");
+  }
 
   audioContext = new AudioContext({ sampleRate: 16000 });
   const source = audioContext.createMediaStreamSource(stream);
