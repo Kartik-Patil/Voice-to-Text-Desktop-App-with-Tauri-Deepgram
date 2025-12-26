@@ -1,9 +1,14 @@
 # 🗣️ Voice-to-Text Desktop App (Tauri + React + Deepgram)
 
+
+Demo link: [https://youtu.be/ekxqVYuQw2g]
+
 A cross-platform desktop application that converts real-time voice input into text using Deepgram’s speech-to-text API.  
 Built with **Tauri v2**, **React**, and **TypeScript**.
 
 This project is a **functional clone of Wispr Flow**, focusing on the **core voice-to-text workflow** rather than pixel-perfect UI replication.
+
+
 
 ---
 
@@ -127,6 +132,11 @@ npm run tauri dev
 - Web Audio API
 - 16kHz Linear PCM audio format
 
+### Microphone Permissions
+
+Microphone access is handled at the operating system level, as is standard for native desktop applications built with Tauri. No browser-style permission popup is shown.
+
+
 ### Why WebSockets
 
 - Real-time transcription
@@ -152,6 +162,15 @@ npm run tauri dev
 - System tray support
 - AudioWorklet upgrade
 - Desktop installers
+
+## 🎥 Demo Video
+
+A short screen recording demonstrating:
+- Push-to-talk recording
+- Live transcription
+- End-to-end workflow
+
+
 
 ---
 
