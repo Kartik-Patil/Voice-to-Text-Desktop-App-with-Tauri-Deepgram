@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { startRecording, stopRecording } from "./audio/recorder";
-import { writeText } from "@tauri-apps/plugin-clipboard-manager";
 
 import "./App.css";
 
@@ -11,30 +10,30 @@ function App() {
   const [error, setError] = useState<string | null>(null);
 
   const start = async () => {
+    if (recording) return;
+
     setError(null);
     setPartialText("");
+
     try {
       await startRecording((text, isFinal) => {
         if (isFinal) {
-          setFinalText((prev) => prev + " " + text);
+          setFinalText((prev) => (prev + " " + text).trim());
           setPartialText("");
         } else {
           setPartialText(text);
         }
       });
+
       setRecording(true);
     } catch (e: any) {
-      setError(e.message);
+      setError(e.message || "Failed to start recording");
     }
   };
 
   const stop = () => {
     stopRecording();
     setRecording(false);
-  };
-
-  const copyText = async () => {
-    await writeText(finalText.trim());
   };
 
   return (
@@ -57,10 +56,6 @@ function App() {
         rows={8}
         placeholder="Your transcription will appear here..."
       />
-
-      <button onClick={copyText} disabled={!finalText.trim()}>
-        Copy Text
-      </button>
     </div>
   );
 }

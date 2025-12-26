@@ -7,10 +7,13 @@ import {
 let audioContext: AudioContext | null = null;
 let processor: ScriptProcessorNode | null = null;
 let stream: MediaStream | null = null;
+let recordingActive = false;
 
 export async function startRecording(
   onTranscript: (text: string, isFinal: boolean) => void
 ) {
+  if (recordingActive) return;
+
   try {
     stream = await navigator.mediaDevices.getUserMedia({ audio: true });
   } catch {
@@ -25,6 +28,8 @@ export async function startRecording(
   await connectDeepgram(onTranscript);
 
   processor.onaudioprocess = (event) => {
+    if (!recordingActive) return;
+
     const input = event.inputBuffer.getChannelData(0);
     const pcm = floatTo16BitPCM(input);
     sendAudio(pcm);
@@ -32,15 +37,20 @@ export async function startRecording(
 
   source.connect(processor);
   processor.connect(audioContext.destination);
+
+  recordingActive = true;
 }
 
 export function stopRecording() {
-  processor?.disconnect();
-  audioContext?.close();
-  stream?.getTracks().forEach((t) => t.stop());
+  recordingActive = false;
 
+  processor?.disconnect();
   processor = null;
+
+  audioContext?.close();
   audioContext = null;
+
+  stream?.getTracks().forEach((t) => t.stop());
   stream = null;
 
   closeDeepgram();
